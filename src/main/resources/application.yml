@@ -1,0 +1,14 @@
+spring:
+    thymeleaf:
+      mode: HTML5
+      cache: false
+      templates_root: src/main/resources/templates/
+
+spring:
+    datasource:
+      db-person:
+        url: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=116.126.69.112)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SID=BMTV)))
+        username: hanarocms
+        password: Tl0408dpadptm
+        driver-class-name: oracle.jdbc.driver.OracleDriver
+        validation-query: SELECT 1 FROM dual

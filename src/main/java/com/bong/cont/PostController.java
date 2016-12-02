@@ -1,12 +1,19 @@
 package com.bong.cont;
 
+import com.bong.com.FixturesProperty;
+import com.bong.vo.Article;
 import com.bong.vo.Post;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 /**
  * Created by qhdrl on 2016-12-01.
@@ -15,10 +22,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @EnableAutoConfiguration
 public class PostController {
+
+    static final Logger log = LoggerFactory.getLogger(PostController.class);
+
+    @Autowired
+    private FixturesProperty fixturesProperty;
+
     @RequestMapping(value = "/posts/new", method = RequestMethod.GET)
     public String newPost(Model model) {
-        System.out.printf("2222");
+
+        log.trace("TraceLog");
+        log.debug("DebugLog");
+        log.info("InfoLog");
+        log.warn("WarnLog");
+
         model.addAttribute("post", new Post());
+
         return "new";
     }
 
@@ -27,5 +46,16 @@ public class PostController {
         model.addAttribute("post", post);
 
         return "show";
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String indexPage(Model model) {
+
+        List<Article> article = fixturesProperty.getArticles();
+        log.info("article : " + article.get(0));
+
+        model.addAttribute("post", new Post());
+
+        return "new";
     }
 }
