@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bong.repository.mappers.StbMapper">
+
+    <select id="selectTestStb" resultType="com.bong.vo.Stb">
+      SELECT
+          STB_ID as stbId,
+          IPTV_STATUS_CODE as iptvStatusCode,
+          USER_SERVICE_NUM as userServiceNum
+      FROM
+          STB
+      WHERE
+          ROWNUM = 1
+    </select>
+</mapper>

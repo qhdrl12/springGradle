@@ -3,12 +3,18 @@ spring:
       mode: HTML5
       cache: false
       templates_root: src/main/resources/templates/
-
+---
 spring:
+  cms:
     datasource:
-      db-person:
-        url: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=116.126.69.112)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SID=BMTV)))
-        username: hanarocms
-        password: Tl0408dpadptm
+        platform: oracle
         driver-class-name: oracle.jdbc.driver.OracleDriver
+        url: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=116.126.69.112)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SID=BTEST)))
+        username: HANAROCMS
+        password: Tl0408dpadptm
+        initialize: true
+        max-active: 20
+        max-idle: 10
+        max-wait: -1
         validation-query: SELECT 1 FROM dual
+

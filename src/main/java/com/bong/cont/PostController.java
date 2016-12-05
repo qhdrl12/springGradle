@@ -1,8 +1,10 @@
 package com.bong.cont;
 
 import com.bong.com.FixturesProperty;
+import com.bong.repository.mappers.StbMapper;
 import com.bong.vo.Article;
 import com.bong.vo.Post;
+import com.bong.vo.Stb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class PostController {
 
     @Autowired
     private FixturesProperty fixturesProperty;
+
+    @Autowired StbMapper stbMapper;
 
     @RequestMapping(value = "/posts/new", method = RequestMethod.GET)
     public String newPost(Model model) {
@@ -53,6 +57,11 @@ public class PostController {
 
         List<Article> article = fixturesProperty.getArticles();
         log.info("article : " + article.get(0));
+        Stb stb = stbMapper.selectTestStb();
+
+//        log.info("stb id : " + stb.getStbId());
+//        log.info("iptv_status_code : " + stb.getIptvStatusCode());
+//        log.info("user_service_num : " + stb.getUserServiceNum());
 
         model.addAttribute("post", new Post());
 
