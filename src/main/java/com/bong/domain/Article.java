@@ -1,4 +1,4 @@
-package com.bong.vo;
+package com.bong.domain;
 
 import lombok.Getter;
 import lombok.Setter;

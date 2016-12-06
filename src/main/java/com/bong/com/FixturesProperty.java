@@ -1,6 +1,6 @@
 package com.bong.com;
 
-import com.bong.vo.Article;
+import com.bong.domain.Article;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;

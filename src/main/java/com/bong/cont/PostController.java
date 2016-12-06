@@ -1,17 +1,15 @@
 package com.bong.cont;
 
 import com.bong.com.FixturesProperty;
-import com.bong.repository.mappers.StbMapper;
-import com.bong.vo.Article;
-import com.bong.vo.Post;
-import com.bong.vo.Stb;
+
+import com.bong.svc.StbService;
+import com.bong.domain.Article;
+import com.bong.domain.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -22,16 +20,14 @@ import java.util.List;
  */
 
 @Controller
-@EnableAutoConfiguration
 public class PostController {
 
     static final Logger log = LoggerFactory.getLogger(PostController.class);
 
-    @Autowired
-    private FixturesProperty fixturesProperty;
+    @Autowired private FixturesProperty fixturesProperty;
+    @Autowired StbService stbService;
 
-    @Autowired StbMapper stbMapper;
-
+    /*
     @RequestMapping(value = "/posts/new", method = RequestMethod.GET)
     public String newPost(Model model) {
 
@@ -51,17 +47,15 @@ public class PostController {
 
         return "show";
     }
+    */
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String indexPage(Model model) {
 
         List<Article> article = fixturesProperty.getArticles();
         log.info("article : " + article.get(0));
-        Stb stb = stbMapper.selectTestStb();
 
-//        log.info("stb id : " + stb.getStbId());
-//        log.info("iptv_status_code : " + stb.getIptvStatusCode());
-//        log.info("user_service_num : " + stb.getUserServiceNum());
+        stbService.getTestStb();
 
         model.addAttribute("post", new Post());
 

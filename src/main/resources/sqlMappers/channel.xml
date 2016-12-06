@@ -5,11 +5,11 @@
 
 <mapper namespace="com.bong.repository.mappers.StbMapper">
 
-    <select id="selectTestStb" resultType="com.bong.vo.Stb">
+    <select id="selectTestStb" resultType="com.bong.domain.Stb">
       SELECT
-          STB_ID as stbId,
-          IPTV_STATUS_CODE as iptvStatusCode,
-          USER_SERVICE_NUM as userServiceNum
+          stb_id,
+          iptv_status_code,
+          user_service_num
       FROM
           STB
       WHERE

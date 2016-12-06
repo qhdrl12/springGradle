@@ -1,20 +1,10 @@
 spring:
-    thymeleaf:
-      mode: HTML5
-      cache: false
-      templates_root: src/main/resources/templates/
----
-spring:
-  cms:
-    datasource:
-        platform: oracle
-        driver-class-name: oracle.jdbc.driver.OracleDriver
-        url: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=116.126.69.112)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SID=BTEST)))
-        username: HANAROCMS
-        password: Tl0408dpadptm
-        initialize: true
-        max-active: 20
-        max-idle: 10
-        max-wait: -1
-        validation-query: SELECT 1 FROM dual
+  profiles:
+    active: local
+  thymeleaf:
+    mode: HTML5
+    cache: false
+    templates_root: classpath:/templates/
+#   templates_root: src/main/resources/templates/
+
 
