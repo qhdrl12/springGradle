@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @Component
-@ConfigurationProperties(locations = "classpath:fixtures.yml", prefix = "fixtures")
+@ConfigurationProperties(locations = "classpath:config/fixtures.yml", prefix = "fixtures")
 public class FixturesProperty {
     @NestedConfigurationProperty
     private List<Article> articles = new ArrayList<>();
