@@ -1,4 +1,4 @@
-fixtures:
+external:
   articles:
     -
       id: 1

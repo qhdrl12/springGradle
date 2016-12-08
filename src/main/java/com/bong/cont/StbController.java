@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class StbController {
 
-    @Autowired private FixturesProperty fixturesProperty;
+//    @Autowired private FixturesProperty fixturesProperty;
     @Autowired StbService stbService;
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
