@@ -17,9 +17,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @Configuration
 public class RedisConfig {
-
-
-
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer(){
         return new PropertySourcesPlaceholderConfigurer();
@@ -47,7 +44,6 @@ public class RedisConfig {
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(new GenericToStringSerializer(Object.class));
         redisTemplate.setValueSerializer(new GenericToStringSerializer(Object.class));
-//        redisTemplate.setEnableTransactionSupport(true);
         return redisTemplate;
     }
 

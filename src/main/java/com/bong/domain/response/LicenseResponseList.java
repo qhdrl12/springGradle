@@ -1,4 +1,4 @@
-package com.bong.domain;
+package com.bong.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,15 +19,10 @@ import java.util.List;
 @Data
 public class LicenseResponseList{
 
-    @JsonProperty("row")
-    List<LicenseResponse> row;
+    @JsonProperty List<LicenseResponse> row;
 
     public LicenseResponseList() {
         row = new ArrayList<>();
-    }
-
-    public LicenseResponseList(List<LicenseResponse> row){
-        this.row = row;
     }
 
     public void setLicenseResponseList(LicenseResponse licenseResponse){
@@ -39,6 +34,6 @@ public class LicenseResponseList{
     public String toString(){
         return "LicenseResponseList{" +
                 "row='" + row + '\'' +
-                '}';
+               '}';
     }
 }

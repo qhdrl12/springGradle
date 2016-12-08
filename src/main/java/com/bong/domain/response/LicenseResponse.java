@@ -1,4 +1,4 @@
-package com.bong.domain;
+package com.bong.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -34,6 +34,6 @@ public class LicenseResponse implements Serializable {
                 "result='" + result + '\'' +
                 "access='" + access + '\'' +
                 "ch_data='" + ch_data +
-                '}';
+               '}';
     }
 }
