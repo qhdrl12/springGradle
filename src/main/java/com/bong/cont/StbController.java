@@ -3,8 +3,10 @@ package com.bong.cont;
 import com.bong.com.FixturesProperty;
 
 import com.bong.domain.LicenseResponse;
+import com.bong.domain.LicenseResponseList;
 import com.bong.svc.StbService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -23,20 +25,16 @@ public class StbController {
     @Autowired private FixturesProperty fixturesProperty;
     @Autowired StbService stbService;
 
-//        List<Article> article = fixturesProperty.getArticles();
-//        log.info("article : " + article.get(0).getTitle());
-
-//@RequestMapping(value = "/", method = RequestMethod.GET, produces=MediaType.APPLICATION_XML_VALUE)
-    @RequestMapping(value = "/", method = RequestMethod.GET, produces = { "application/xml", "text/xml" }, consumes = MediaType.ALL_VALUE)
-    public  @ResponseBody LicenseResponse indexPage() {
-
-
-        LicenseResponse licenseResponse = new LicenseResponse();
-        licenseResponse.setCh_data(stbService.getStbStatus());
-        licenseResponse.setAccess("1");
-        licenseResponse.setResult("YES");
-
-        log.info(licenseResponse.toString());
-        return licenseResponse;
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @ResponseBody public LicenseResponseList indexPage(HttpServletRequest request) {
+        log.info("request : " + request.getQueryString());
+        LicenseResponseList licenseResponseList = new LicenseResponseList();
+        try {
+            licenseResponseList.setLicenseResponseList(new LicenseResponse(stbService.getStbStatus(), "1", "YES"));
+        }catch (Exception e){
+            licenseResponseList.setLicenseResponseList(new LicenseResponse("err", "1", "EXCEPTION"));
+        }
+        log.info(licenseResponseList.toString());
+        return licenseResponseList;
     }
 }
