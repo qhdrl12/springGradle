@@ -4,6 +4,7 @@ import com.bong.domain.request.StbInfoSearchParam;
 import com.bong.repository.mappers.StbMapper;
 import com.bong.domain.response.Stb;
 import com.bong.repository.redis.ChannelRedisRepository;
+import com.sun.xml.internal.bind.v2.TODO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,8 @@ public class StbServiceImpl implements StbService {
             if(licenseInfo != null && (stbInfoSearchParam.getMac_address().equals(infoMacAddr))){
                 result = "0#" + licenseInfo.substring(licenseInfo.indexOf("#")+1);
             }else{
-
+                licenseKey = getLicenseInfoDB(stbInfoSearchParam);
+                //TODO
             }
         }catch(Exception e){
             e.printStackTrace();
