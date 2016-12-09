@@ -1,7 +1,5 @@
 package com.bong.cont;
 
-import com.bong.com.FixturesProperty;
-
 import com.bong.domain.request.StbInfoSearchParam;
 import com.bong.domain.response.LicenseResponse;
 import com.bong.domain.response.LicenseResponseList;
