@@ -5,21 +5,33 @@
 
 <mapper namespace="com.bong.repository.mappers.StbMapper">
 
+	<resultMap id="clobResult" type="com.bong.domain.response.LicenseInfo">
+		<result property="license_info" column="LICENSE_INFO" jdbcType="CLOB" javaType="java.lang.String"/>
+	</resultMap>
+
+
     <select id="getStbInfo" parameterType="com.bong.domain.request.StbInfoSearchParam" resultType="com.bong.domain.response.Stb">
-      	SELECT   TRIM(A.IPTV_STATUS_CODE) AS IPTV_STATUS_CODE
-			,A.USER_INIT_NUM
-			,A.ID_PACKAGE
-			,A.TV_PACKAGE
-			,A.NETWORK_TYPE
-			,A.IPTV_USABLE
-			,DECODE(C.POST_NO, NULL, '137072', C.POST_NO) AS POST_NO
-			,B.MODEL_CODE
-			,A.SERVICE_CODE
-		 FROM	STB A, PHYSICAL_STB B, STB_LOCATION C
-	    WHERE	A.STB_ID = B.STB_ID
-		  AND	A.USER_SERVICE_NUM = C.USER_SERVICE_NUM(+)
-		  AND	A.STB_ID = #{stb_id}
-		  AND	B.MAC_ADDRESS = #{mac_address}
-		  AND	ROWNUM = 1
+      SELECT   TRIM(A.IPTV_STATUS_CODE) AS iptv_status_code
+					,A.user_init_num
+					,A.id_package
+					,A.tv_package
+					,A.network_type
+					,A.iptv_usable
+					,DECODE(C.POST_NO, NULL, '137072', C.POST_NO) AS post_no
+					,B.model_code
+					,A.service_code
+			FROM	STB A, PHYSICAL_STB B, STB_LOCATION C
+			WHERE	A.STB_ID = B.STB_ID
+			  AND	A.USER_SERVICE_NUM = C.USER_SERVICE_NUM(+)
+			  AND	A.STB_ID = #{stb_id}
+			  AND	B.MAC_ADDRESS = #{mac_address}
+			  AND	ROWNUM = 1
     </select>
+
+	<select id="getLicenseInfo" parameterType="com.bong.domain.request.StbInfoSearchParam" resultMap="clobResult">
+		SELECT
+			FN_GET_STB_CH(#{stb_id}) AS LICENSE_INFO
+		  FROM DUAL
+	</select>
+
 </mapper>

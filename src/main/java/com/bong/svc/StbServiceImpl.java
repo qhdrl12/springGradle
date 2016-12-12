@@ -1,10 +1,11 @@
 package com.bong.svc;
 
 import com.bong.domain.request.StbInfoSearchParam;
+import com.bong.domain.response.LicenseInfo;
+import com.bong.domain.response.LicenseResponse;
 import com.bong.repository.mappers.StbMapper;
 import com.bong.domain.response.Stb;
 import com.bong.repository.redis.ChannelRedisRepository;
-import com.sun.xml.internal.bind.v2.TODO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,64 +25,68 @@ public class StbServiceImpl implements StbService {
 //    @Autowired RedisTemplate redisSecTemplate;
 
     @Override
-    public String getStbStatus(StbInfoSearchParam stbInfoSearchParam) {
-        String result = null;
-        String licenseKey = null;
-        String licenseInfo = null;
-        String infoMacAddr = null;
-
+    public LicenseResponse getStbStatus(StbInfoSearchParam stbInfoSearchParam) {
+//        String result = null;
+        LicenseResponse licenseResponse = new LicenseResponse();
         try{
+            String licenseKey;
+            String licenseInfo;
+            String access;
+            String result;
+            String[] licenseInfoArr;
+
             licenseInfo = (String)channelRedisRepository.get(stbInfoSearchParam.getStb_id());
 
-            log.info("licenseeInfo : " + licenseInfo);
-
-            infoMacAddr = licenseInfo.substring(0, licenseInfo.indexOf("#"));
-            if(licenseInfo != null && (stbInfoSearchParam.getMac_address().equals(infoMacAddr))){
-                result = "0#" + licenseInfo.substring(licenseInfo.indexOf("#")+1);
+            if(licenseInfo != null && (stbInfoSearchParam.getMac_address().equals(licenseInfo.substring(0, licenseInfo.indexOf("#"))))){
+                access = "0";
+                result = "YES";
+                licenseKey = licenseInfo.substring(licenseInfo.indexOf("#")+1);
             }else{
                 licenseKey = getLicenseInfoDB(stbInfoSearchParam);
-                //TODO
+                access = "1";
+                if(StringUtils.isEmpty(licenseKey)) {
+                    result = "FAIL";
+                }else{
+                    licenseInfoArr = licenseKey.split("#");
+                    if(2 < Integer.parseInt(licenseInfoArr[0]) && licenseInfoArr[1].indexOf("err") == -1){
+                        channelRedisRepository.set(stbInfoSearchParam.getStb_id(), stbInfoSearchParam.getMac_address() + "#" + licenseKey);
+                    } //TODO Default Channel 추가
+                    result = "YES";
+                }
             }
+            licenseResponse.setAccess(access);
+            licenseResponse.setResult(result);
+            licenseResponse.setCh_data(licenseKey);
         }catch(Exception e){
-            e.printStackTrace();
+            licenseResponse.setResult("FAIL");
+            licenseResponse.setAccess("0");
+            licenseResponse.setCh_data("");
+            log.error("Get Error [ stb_id : " + stbInfoSearchParam.getStb_id() + " ]" + e);
         }
+        log.info("result : " + licenseResponse.toString());
 
-        log.info("result : " + result);
-//        Stb stb = stbMapper.getStbInfo(stbInfoSearchParam);
-//        log.info("stb id : " + stb.toString());
-//        String key = "{B32A7AAA-859A-11E3-BA55-F9B26550CBD3}";
-
-        return result;
+        return licenseResponse;
     }
 
     private String getLicenseInfoDB(StbInfoSearchParam stbInfoSearchParam){
         Stb stb = stbMapper.getStbInfo(stbInfoSearchParam);
-        int retType = 0;
+        String result = null;
+
         if(!ObjectUtils.isEmpty(stb)){
             String iptvStatusCode   = StringUtils.defaultString(stb.getIptv_status_code(), "");
-            String tvpPackage       = StringUtils.defaultString(stb.getTv_package(), "");
-
-            if("".equals(iptvStatusCode)){
-                retType = 1;
-            }else if("0".equals(iptvStatusCode)){
-                retType = 2;
+            String tvPackage       = StringUtils.defaultString(stb.getTv_package(), "");
+            if("".equals(iptvStatusCode)){ //
+                result = "1#";
+            }else if("0".equals(iptvStatusCode)){ //
+                result = "2#";
             }else if("1".equals(iptvStatusCode)){
-                retType = Integer.parseInt(tvpPackage);
+                LicenseInfo licenseInfo = stbMapper.getLicenseInfo(stbInfoSearchParam);
+                result = licenseInfo != null ? tvPackage + "#" + licenseInfo.getLicense_info() : "";
             }else{
-                retType = 0;
-            }
-
-            String result = null;
-            switch(retType){
-                case 0 : result = null; break;
-                case 1 : result = "1#"; break;
-                case 2 : result = "2#"; break;
-                default :
-
-                    break;
+                result = null;
             }
         }
 
-        return "aa";
+        return result;
     }
 }

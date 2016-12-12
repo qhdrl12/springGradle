@@ -28,11 +28,10 @@ public class StbController {
         log.info("model attribute : " + stbInfoSearchParam);
         LicenseResponseList licenseResponseList = new LicenseResponseList();
         try {
-            licenseResponseList.setLicenseResponseList(new LicenseResponse(stbService.getStbStatus(stbInfoSearchParam), "1", "YES"));
+            licenseResponseList.setLicenseResponseList(stbService.getStbStatus(stbInfoSearchParam));
         }catch (Exception e){
             licenseResponseList.setLicenseResponseList(new LicenseResponse("err", "1", "EXCEPTION"));
         }
-        log.info(licenseResponseList.toString());
         return licenseResponseList;
     }
 }
