@@ -16,23 +16,14 @@ import java.io.Serializable;
 public class Stb implements Serializable{
 
     @JsonProperty private String iptv_status_code;
-
     @JsonProperty private String user_service_num;
-
     @JsonProperty private String user_init_num;
-
     @JsonProperty private String id_package;
-
     @JsonProperty private String tv_package;
-
     @JsonProperty private String network_type;
-
     @JsonProperty private String iptv_usable;
-
     @JsonProperty private String post_no;
-
     @JsonProperty private String model_code;
-
     @JsonProperty private String service_code;
 
     @Override

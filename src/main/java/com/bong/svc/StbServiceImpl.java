@@ -3,12 +3,14 @@ package com.bong.svc;
 import com.bong.domain.request.StbInfoSearchParam;
 import com.bong.domain.response.LicenseInfo;
 import com.bong.domain.response.LicenseResponse;
-import com.bong.repository.mappers.StbMapper;
 import com.bong.domain.response.Stb;
+import com.bong.repository.mappers.StbMapper;
 import com.bong.repository.redis.ChannelRedisRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -18,11 +20,13 @@ import org.springframework.util.ObjectUtils;
 @Slf4j
 @Component("stbService")
 public class StbServiceImpl implements StbService {
-
     @Autowired StbMapper stbMapper;
     @Autowired ChannelRedisRepository channelRedisRepository;
-//    @Autowired RedisTemplate redisTemplate;
-//    @Autowired RedisTemplate redisSecTemplate;
+    @Autowired RedisTemplate redisTemplate;
+    @Autowired RedisTemplate redisSecTemplate;
+
+    private static boolean redisFlag = false;
+    private static int reconCount = 0;
 
     @Override
     public LicenseResponse getStbStatus(StbInfoSearchParam stbInfoSearchParam) {
@@ -32,36 +36,70 @@ public class StbServiceImpl implements StbService {
             String licenseKey;
             String licenseInfo;
             String access;
-            String result;
+            String result = "YES";
             String[] licenseInfoArr;
 
             licenseInfo = (String)channelRedisRepository.get(stbInfoSearchParam.getStb_id());
 
             if(licenseInfo != null && (stbInfoSearchParam.getMac_address().equals(licenseInfo.substring(0, licenseInfo.indexOf("#"))))){
                 access = "0";
-                result = "YES";
-                licenseKey = licenseInfo.substring(licenseInfo.indexOf("#")+1);
+                licenseKey = substrLicenseKey(licenseInfo);
             }else{
-                licenseKey = getLicenseInfoDB(stbInfoSearchParam);
                 access = "1";
-                if(StringUtils.isEmpty(licenseKey)) {
+                licenseKey = getLicenseInfoDB(stbInfoSearchParam);
+                if(licenseKey == null) {
+                    /**
+                     *  라이센스에 처리되지 않는 IPTV_STATUS_CODE *
+                     *  */
                     result = "FAIL";
+                    licenseKey = "ERR|keyisnull";
                 }else{
                     licenseInfoArr = licenseKey.split("#");
-                    if(2 < Integer.parseInt(licenseInfoArr[0]) && licenseInfoArr[1].indexOf("err") == -1){
-                        channelRedisRepository.set(stbInfoSearchParam.getStb_id(), stbInfoSearchParam.getMac_address() + "#" + licenseKey);
-                    } //TODO Default Channel 추가
-                    result = "YES";
+
+                    if(licenseInfoArr.length > 1){
+                        if(2 < Integer.parseInt(licenseInfoArr[0]) && licenseInfoArr[1].indexOf("err") == -1){
+                            channelRedisRepository.set(stbInfoSearchParam.getStb_id(), stbInfoSearchParam.getMac_address() + "#" + licenseKey);
+                            licenseKey = substrLicenseKey(licenseKey);
+                        } //TODO Default Channel 추가
+                    }else{
+                        /**
+                         * 1 - 미 가입 (IPTVNOTACCOUNT)
+                         * 2 - 청약 중 (Default Channel List)
+                         * */
+                        if("1".equals(licenseInfoArr[0])){
+                            result = "FAIL";
+                            licenseKey = "ERR|IPTVNOACCOUNT";
+                        }else if("2".equals(licenseInfoArr[0])){
+                            licenseKey = "DEFAULT CHANNEL LIST";
+                        }
+                    }
                 }
             }
+
+            reconCount = 0;
             licenseResponse.setAccess(access);
             licenseResponse.setResult(result);
             licenseResponse.setCh_data(licenseKey);
+//        }catch(RedisConnectionFailureException e){
+//            if(redisFlag){
+//                channelRedisRepository = new ChannelRedisRepository(redisSecTemplate);
+//                redisFlag = false;
+//            }else{
+//                channelRedisRepository = new ChannelRedisRepository(redisTemplate);
+//                redisFlag = true;
+//            }
+//            reconCount++;
+//
+//            if(reconCount == 5){
+//                reconCount = 0;
+//                return setFailResponse(licenseResponse);
+//            }
+//
+//            log.error("jedis secondary change... reload function");
+//            licenseResponse = getStbStatus(stbInfoSearchParam);
         }catch(Exception e){
-            licenseResponse.setResult("FAIL");
-            licenseResponse.setAccess("0");
-            licenseResponse.setCh_data("");
             log.error("Get Error [ stb_id : " + stbInfoSearchParam.getStb_id() + " ]" + e);
+            return setFailResponse(licenseResponse);
         }
         log.info("result : " + licenseResponse.toString());
 
@@ -69,7 +107,9 @@ public class StbServiceImpl implements StbService {
     }
 
     private String getLicenseInfoDB(StbInfoSearchParam stbInfoSearchParam){
+        log.info("getLicenseInfoDB Parameter : " + stbInfoSearchParam);
         Stb stb = stbMapper.getStbInfo(stbInfoSearchParam);
+
         String result = null;
 
         if(!ObjectUtils.isEmpty(stb)){
@@ -86,7 +126,18 @@ public class StbServiceImpl implements StbService {
                 result = null;
             }
         }
-
         return result;
+    }
+
+    private LicenseResponse setFailResponse(LicenseResponse licenseResponse){
+        licenseResponse.setResult("FAIL");
+        licenseResponse.setAccess("0");
+        licenseResponse.setCh_data("");
+
+        return licenseResponse;
+    }
+
+    private String substrLicenseKey(String licenseKey){
+        return licenseKey.substring(licenseKey.lastIndexOf("#")+1);
     }
 }

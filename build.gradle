@@ -42,7 +42,7 @@ repositories {
 }
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+	compile("org.springframework.boot:spring-boot-starter-freemarker")
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-jdbc")
 	compile("org.springframework.boot:spring-boot-starter-redis")
@@ -53,7 +53,7 @@ dependencies {
 	compile("org.slf4j:slf4j-api:1.7.7")
 	compile("ch.qos.logback:logback-classic:1.1.5")
 	compileOnly("org.projectlombok:lombok:1.16.10")
-	compile files("/src/main/resources/libs/ojdbc14-10.2.0.4.0.jar")
+	compile files("src/main/resources/libs/ojdbc14-10.2.0.4.0.jar")
 	testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 

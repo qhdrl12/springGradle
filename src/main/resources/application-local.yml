@@ -32,8 +32,3 @@ spring:
       min-idle: 0
     timeout: 3000
     port: 6389
-
-
-
-
-

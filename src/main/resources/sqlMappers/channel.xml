@@ -9,9 +9,8 @@
 		<result property="license_info" column="LICENSE_INFO" jdbcType="CLOB" javaType="java.lang.String"/>
 	</resultMap>
 
-
     <select id="getStbInfo" parameterType="com.bong.domain.request.StbInfoSearchParam" resultType="com.bong.domain.response.Stb">
-      SELECT   TRIM(A.IPTV_STATUS_CODE) AS iptv_status_code
+      		SELECT TRIM(A.IPTV_STATUS_CODE) AS iptv_status_code
 					,A.user_init_num
 					,A.id_package
 					,A.tv_package
@@ -33,5 +32,4 @@
 			FN_GET_STB_CH(#{stb_id}) AS LICENSE_INFO
 		  FROM DUAL
 	</select>
-
 </mapper>
