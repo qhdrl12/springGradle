@@ -9,10 +9,11 @@ import com.bong.repository.redis.ChannelRedisRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.RedisConnectionFailureException;
+//import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import redis.clients.jedis.JedisCluster;
 
 /**
  * Created by ibong-gi on 2016. 12. 6..
@@ -21,9 +22,10 @@ import org.springframework.util.ObjectUtils;
 @Component("stbService")
 public class StbServiceImpl implements StbService {
     @Autowired StbMapper stbMapper;
-    @Autowired ChannelRedisRepository channelRedisRepository;
+//    @Autowired ChannelRedisRepository channelRedisRepository;
     @Autowired RedisTemplate redisTemplate;
-    @Autowired RedisTemplate redisSecTemplate;
+    @Autowired JedisCluster jedisCluster;
+//    @Autowired RedisTemplate redisSecTemplate;
 
     private static boolean redisFlag = false;
     private static int reconCount = 0;
@@ -39,7 +41,8 @@ public class StbServiceImpl implements StbService {
             String result = "YES";
             String[] licenseInfoArr;
 
-            licenseInfo = (String)channelRedisRepository.get(stbInfoSearchParam.getStb_id());
+            licenseInfo = jedisCluster.get(stbInfoSearchParam.getStb_id());
+//             licenseInfo = (String)channelRedisRepository.get(stbInfoSearchParam.getStb_id());
 
             if(licenseInfo != null && (stbInfoSearchParam.getMac_address().equals(licenseInfo.substring(0, licenseInfo.indexOf("#"))))){
                 access = "0";
@@ -58,7 +61,8 @@ public class StbServiceImpl implements StbService {
 
                     if(licenseInfoArr.length > 1){
                         if(2 < Integer.parseInt(licenseInfoArr[0]) && licenseInfoArr[1].indexOf("err") == -1){
-                            channelRedisRepository.set(stbInfoSearchParam.getStb_id(), stbInfoSearchParam.getMac_address() + "#" + licenseKey);
+//                            channelRedisRepository.set(stbInfoSearchParam.getStb_id(), stbInfoSearchParam.getMac_address() + "#" + licenseKey);
+                            jedisCluster.set(stbInfoSearchParam.getStb_id(), stbInfoSearchParam.getMac_address() + "#" + licenseKey);
                             licenseKey = substrLicenseKey(licenseKey);
                         } //TODO Default Channel 추가
                     }else{
