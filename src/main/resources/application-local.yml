@@ -44,3 +44,7 @@ spring:
       iptvinfo: /iptvchlicense/IptvCHLicenseInfo.jsp?
       manager: /iptvchlicense/manager.jsp?
       licupdate: /iptvchlicense/licupdate.jsp?
+    bypass:
+      status: N
+      file-name: bypassch.txt
+

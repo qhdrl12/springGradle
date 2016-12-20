@@ -44,6 +44,6 @@ public class AppConfig {
 
     @Bean
     public JedisCluster jedisCluster(){
-        return new JedisCluster(jedisClusterNodes(), redisProperty.getTimeOut(), initPoolConfiguration());
+        return new JedisCluster(jedisClusterNodes(), (int)redisProperty.getRedis().get("timeout"), initPoolConfiguration());
     }
 }

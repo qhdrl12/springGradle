@@ -18,7 +18,5 @@ public class RedisProperty {
     public Map<String, Object> getRedis(){
         return redis;
     }
-
-    public int getTimeOut() { return (int)redis.get("timeout"); }
 }
 
