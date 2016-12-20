@@ -30,7 +30,7 @@ public class DatabaseConfig {
     @Primary
     @Bean(name = "cmsDataSource")
     @Qualifier(value = "cmsDataSource")
-    @ConfigurationProperties(prefix = "spring.cms.datasource")
+    @ConfigurationProperties(prefix = "spring.database.cms.datasource")
     public DataSource cmsDataSource(){
         return DataSourceBuilder.create().build();
     }
